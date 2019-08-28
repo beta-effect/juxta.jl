@@ -91,7 +91,7 @@ function dropdims(ja::JuxtArray; dims=[])
     for (i,dim) in enumerate(reverse(dim_vec))
         if dim in dims
             irev = ndims - i + 1
-            @assert size(ja, dim) == 1
+            @assert size(ja, dim) == 1 "Cannot drop dim with size > 1"
             ja.array = Base.dropdims(ja.array, dims=irev)
             deleteat!(dim_vec, irev)
         end
