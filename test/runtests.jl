@@ -35,8 +35,8 @@ ja3 = juxta.JuxtArray(randn(5,10), ("x","y"),
     @test ja3.coords["x"] == Number[1]
     @test juxta.sel!(ja3, y=10.3).indices["y"] == 1:2
     @test ja3.coords["y"] == Number[10,12]
-    @test juxta.jsize(ja3) == (1,2)
-    @test juxta.jsize(ja3, "x") == 1
-    @test juxta.jsize(ja3, "y") == 2
-    @test juxta.jsize(juxta.dropdims(ja3, dims=["x"])) == (2,)
+    @test size(ja3) == (1,2)
+    @test size(ja3, "x") == 1
+    @test size(ja3, "y") == 2
+    @test size(juxta.dropdims(ja3, dims=["x"])) == (2,)
 end

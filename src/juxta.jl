@@ -78,11 +78,9 @@ function sel!(ja::JuxtArray, method::String = "subset"; kwargs...)
     ja
 end
 
-function jsize(ja::JuxtArray)
-    Base.size(ja.array)
-end
+Base.size(ja::JuxtArray) = Base.size(ja.array)
 
-function jsize(ja::JuxtArray, dim::String)
+function Base.size(ja::JuxtArray, dim::String)
     i = findfirst(x -> x==dim, ja.dims)
     Base.size(ja.array, i)
 end
@@ -93,7 +91,7 @@ function dropdims(ja::JuxtArray; dims=[])
     for (i,dim) in enumerate(reverse(dim_vec))
         if dim in dims
             irev = ndims - i + 1
-            @assert jsize(ja, dim) == 1
+            @assert size(ja, dim) == 1
             ja.array = Base.dropdims(ja.array, dims=irev)
             deleteat!(dim_vec, irev)
         end
