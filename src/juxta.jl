@@ -9,7 +9,7 @@ mutable struct JuxtArray
     function JuxtArray(array, dims, coords, attribs)
         @assert ndims(array) == length(dims) "Number of dims should be equal to the number of dims of the array"
         indices = Dict{String, AbstractRange}()
-        for (i, array_dim_length) in enumerate(size(array))
+        for (i, array_dim_length) in enumerate(Base.size(array))
             @assert array_dim_length == size(coords[dims[i]])[1] "Mismatch between length of array and coordinate"
             push!(indices,dims[i]=>1:array_dim_length)
         end
@@ -75,6 +75,30 @@ function sel!(ja::JuxtArray, method::String = "subset"; kwargs...)
             isel!(ja; kwargs...)
         end
     end
+    ja
+end
+
+function jsize(ja::JuxtArray)
+    Base.size(ja.array)
+end
+
+function jsize(ja::JuxtArray, dim::String)
+    i = findfirst(x -> x==dim, ja.dims)
+    Base.size(ja.array, i)
+end
+
+function dropdims(ja::JuxtArray; dims=[])
+    dim_vec = Array([ja.dims...])
+    ndims = length(dim_vec)
+    for (i,dim) in enumerate(reverse(dim_vec))
+        if dim in dims
+            irev = ndims - i + 1
+            @assert jsize(ja, dim) == 1
+            ja.array = Base.dropdims(ja.array, dims=irev)
+            deleteat!(dim_vec, irev)
+        end
+    end
+    ja.dims = tuple(dim_vec...)
     ja
 end
 
