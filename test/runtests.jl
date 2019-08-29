@@ -2,17 +2,13 @@ using juxta
 using Test
 
 ja = juxta.JuxtArray(randn(5,10), ("x","y"),
-                     Dict("x"=>collect(1:5),"y"=>collect(1:10)),
-                     Dict())
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10)))
 ja1 = juxta.JuxtArray(randn(5,10), ("x","y"),
-                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2),
-                     Dict())
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 ja2 = juxta.JuxtArray(randn(5,10), ("x","y"),
-                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2),
-                     Dict())
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 ja3 = juxta.JuxtArray(randn(5,10), ("x","y"),
-                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2),
-                     Dict())
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 @testset "juxta.jl" begin
     @test typeof(ja) == juxta.JuxtArray
     @test ja.indices["x"] == 1:5
@@ -38,5 +34,5 @@ ja3 = juxta.JuxtArray(randn(5,10), ("x","y"),
     @test size(ja3) == (1,2)
     @test size(ja3, "x") == 1
     @test size(ja3, "y") == 2
-    @test size(juxta.dropdims(ja3, dims=["x"])) == (2,)
+    @test size(dropdims(ja3, ["x"])) == (2,)
 end

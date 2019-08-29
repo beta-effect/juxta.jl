@@ -1,12 +1,23 @@
 module juxta
 
+"""
+    JuxtArray(array::Array, dims::Tuple, coords::Dict{String, Vector{Number}}[, attribs::Dict])
+
+Construct an N-dimensional JuxtArray which contains an Array as well
+as Vectors representing the dimensions.
+
+# Examples
+```julia-repl
+julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10)))
+```
+"""
 mutable struct JuxtArray
     array::AbstractArray
     dims::Tuple
     coords::Dict{String, Vector{Number}}
     attribs::Dict
     indices::Dict{String, AbstractRange}
-    function JuxtArray(array, dims, coords, attribs)
+    function JuxtArray(array, dims, coords, attribs=Dict())
         @assert ndims(array) == length(dims) "Number of dims should be equal to the number of dims of the array"
         indices = Dict{String, AbstractRange}()
         for (i, array_dim_length) in enumerate(Base.size(array))
@@ -17,6 +28,22 @@ mutable struct JuxtArray
     end
 end
 
+"""
+    isel!(ja::JuxtArray; kwargs)
+
+A method for index-based slicing of JuxtArray.
+
+# Arguments
+
+- `x::OrdinalRange`: A range that would be used to slice along the dimension `x`. Note that `x` has to be one of the dimensions. Slices for multiple dimensions can be passed in one call.
+
+# Example
+```
+julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10)))
+julia> isel!(ja, x=2:4, y=3:7)
+```
+See also: [`sel!`](@ref)
+"""
 function isel!(ja::JuxtArray; kwargs...)
     for (k,v) in kwargs
         if String(k) in ja.dims
@@ -59,6 +86,40 @@ function get_start_stop_indices(dim_vector::Vector,
     return (start, stop)
 end
 
+"""
+    sel!(ja::JuxtArray, method::String; kwargs)
+
+A method for physical slicing of JuxtArray.
+
+# Arguments
+
+- `method::String="subset"`: can eith be `"subset"`(default) or `"nearest"`. This is used when the extremeties of the range do not exactly line up up with the axis grid. The former gives a slice where the slice is the largest possible subset of the provided range, while the latter gives a subset whose extremeties are nearest to the extremeties of the provided range.
+- `x::Union{AbstractRange, Real}`: A range that would be used to slice along the dimension `x`. Note that `x` has to be one of the dimensions. Slices for multiple dimensions can be passed in one call. The range can be of integer type (`1:4`) or float type (`1.1:4.1`). For integer type ranges, step is ignored by this function i.e. `1:2:4` and `1:4` are treated in the same way. Care must be taken while using float ranges. For example, 1.1:3.3 is not the same as 1.1:0.1:3.3. The latter must be used. If `x` is `Real`, a subset encompassing `x` is returned if `method="subset"` or a single value is returned closest to `x` if `method="nearest"`.
+
+# Example
+```
+julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> sel!(ja, y=3.7:7.9)
+```
+This returns a subset where the dimension `y` ranges from 4:6.
+```
+julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> sel!(ja, method="nearest", y=3.7:7.9)
+```
+This returns a subset where the dimension `y` ranges from 4:8.
+```
+julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> sel!(ja, y=3.7)
+```
+This returns a subset where the dimension `y` ranges from 2:4.
+```
+julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> sel!(ja, method="nearest", y=3.7)
+```
+This returns a subset where the dimension `y` ranges from 4:4.
+
+See also: [`isel!`](@ref)
+"""
 function sel!(ja::JuxtArray, method::String = "subset"; kwargs...)
     for (k,v) in kwargs
         dim = String(k)
@@ -78,14 +139,32 @@ function sel!(ja::JuxtArray, method::String = "subset"; kwargs...)
     ja
 end
 
+"""
+Returns the size of the Array.
+"""
 Base.size(ja::JuxtArray) = Base.size(ja.array)
 
+"""
+    size(ja::JuxtArray[, dim::String])
+
+Returns the size of the Array.
+
+# Arguments
+
+- `ja::JuxtArray`: The size of this array will be returned.
+- `dim::String`: The dimension whose size is queried.
+"""
 function Base.size(ja::JuxtArray, dim::String)
     i = findfirst(x -> x==dim, ja.dims)
     Base.size(ja.array, i)
 end
 
-function dropdims(ja::JuxtArray; dims=[])
+"""
+    dropdims(ja::JuxtArray, dims::Vector{String})
+
+Drops dimensions from the list `dims` if and only if their length is 1.
+"""
+function Base.dropdims(ja::JuxtArray, dims=[])
     dim_vec = Array([ja.dims...])
     ndims = length(dim_vec)
     for (i,dim) in enumerate(reverse(dim_vec))
