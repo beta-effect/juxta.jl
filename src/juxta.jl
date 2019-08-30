@@ -8,7 +8,7 @@ as Vectors representing the dimensions.
 
 # Examples
 ```julia-repl
-julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10)))
+julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10)))
 ```
 """
 mutable struct JuxtArray
@@ -120,23 +120,23 @@ A method for physical slicing of JuxtArray.
 
 # Example
 ```
-julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-julia> sel!(ja, y=3.7:7.9)
+julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> juxta.sel!(ja, y=3.7:7.9)
 ```
 This returns a subset where the dimension `y` ranges from 4:6.
 ```
-julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-julia> sel!(ja, method="nearest", y=3.7:7.9)
+julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> juxta.sel!(ja, "nearest", y=3.7:7.9)
 ```
 This returns a subset where the dimension `y` ranges from 4:8.
 ```
-julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-julia> sel!(ja, y=3.7)
+julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> juxta.sel!(ja, y=3.7)
 ```
 This returns a subset where the dimension `y` ranges from 2:4.
 ```
-julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-julia> sel!(ja, method="nearest", y=3.7)
+julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+julia> juxta.sel!(ja, "nearest", y=3.7)
 ```
 This returns a subset where the dimension `y` ranges from 4:4.
 
