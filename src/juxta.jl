@@ -13,7 +13,7 @@ julia> ja = JuxtArray(randn(5,10), ("x","y"), Dict("x"=>collect(1:5),"y"=>collec
 """
 mutable struct JuxtArray
     array::AbstractArray
-    dims::Tuple
+    dims::Vector{String}
     coords::Dict{String, Vector{Number}}
     attribs::Dict
     indices::Dict{String, AbstractRange}
@@ -27,6 +27,17 @@ mutable struct JuxtArray
         new(array, dims, coords, attribs, indices)
     end
 end
+
+# function Base.setproperty!(ja::JuxtArray, ::Field{:coords}, d::Dict{String, Vector{Number}})
+
+# end
+# function Base.setproperty!(ja::JuxtArray, :dims, d::Dict{String, Vector{Number}})
+
+# end
+# function Base.setproperty!(ja::JuxtArray, :array, d::Dict{String, Vector{Number}})
+
+# end
+
 
 """
     isel!(ja::JuxtArray; kwargs)
@@ -165,17 +176,16 @@ end
 Drops dimensions from the list `dims` if and only if their length is 1.
 """
 function Base.dropdims(ja::JuxtArray, dims=[])
-    dim_vec = Array([ja.dims...])
-    ndims = length(dim_vec)
-    for (i,dim) in enumerate(reverse(dim_vec))
+    @assert !(ja.dims == dims) "All dimensions of an array cannot be dropped."
+    ndims = length(ja.dims)
+    for (i,dim) in enumerate(reverse(ja.dims))
         if dim in dims
             irev = ndims - i + 1
             @assert size(ja, dim) == 1 "Cannot drop dim with size > 1"
             ja.array = Base.dropdims(ja.array, dims=irev)
-            deleteat!(dim_vec, irev)
+            deleteat!(ja.dims, irev)
         end
     end
-    ja.dims = tuple(dim_vec...)
     ja
 end
 

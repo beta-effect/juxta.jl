@@ -1,13 +1,15 @@
 using juxta
 using Test
 
-ja = juxta.JuxtArray(randn(5,10), ("x","y"),
+ja = juxta.JuxtArray(randn(5,10), ["x","y"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10)))
-ja1 = juxta.JuxtArray(randn(5,10), ("x","y"),
+ja1 = juxta.JuxtArray(randn(5,10), ["x","y"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-ja2 = juxta.JuxtArray(randn(5,10), ("x","y"),
+ja2 = juxta.JuxtArray(randn(5,10), ["x","y"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-ja3 = juxta.JuxtArray(randn(5,10), ("x","y"),
+ja3 = juxta.JuxtArray(randn(5,10), ["x","y"],
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+ja4 = juxta.JuxtArray(randn(5,10), ["x","y"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 @testset "juxta.jl" begin
     @test typeof(ja) == juxta.JuxtArray
@@ -35,4 +37,10 @@ ja3 = juxta.JuxtArray(randn(5,10), ("x","y"),
     @test size(ja3, "x") == 1
     @test size(ja3, "y") == 2
     @test size(dropdims(ja3, ["x"])) == (2,)
+    @test ja3.dims == ["y"]
+    @test (ja4
+           |> j->juxta.isel!(j,x=2)
+           |> j->dropdims(j,["x"])
+           |> j->size(j)) == (10,)
+    @test ja4.dims == ["y"]
 end
