@@ -43,4 +43,5 @@ ja4 = juxta.JuxtArray(randn(5,10), ["x","y"],
            |> j->dropdims(j,["x"])
            |> j->size(j)) == (10,)
     @test ja4.dims == ["y"]
+    @test typeof(show(ja4)) == Nothing
 end
