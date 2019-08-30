@@ -28,6 +28,16 @@ mutable struct JuxtArray
     end
 end
 
+function Base.show(io::IO, ja::JuxtArray)
+    println("Dimensions  : $(ja.dims)")
+    println("Array       : $(summary(ja.array))")
+    println("Coordinates :")
+    for (k,v) in ja.coords
+        println("    $k: $(summary(v))")
+    end
+    println("Attributes  : $(ja.attribs)")
+end
+
 # function Base.setproperty!(ja::JuxtArray, ::Field{:coords}, d::Dict{String, Vector{Number}})
 
 # end
