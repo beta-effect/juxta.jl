@@ -53,19 +53,19 @@ Coordinates :
     y: 2-element Array{Number,1}
 Attributes  : Dict{Any,Any}()
 ```
-This returns a subset where the dimension `y` ranges from 4:6.
+This returns a subset where the dimension `y` ranges from 4:2:6.
 
 ```julia-repl
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> juxta.sel!(ja, "nearest", y=3.7:7.9)
 Dimensions  : ["x", "y"]
-Array       : 5×2 Array{Float64,2}
+Array       : 5×3 Array{Float64,2}
 Coordinates :
     x: 5-element Array{Number,1}
-    y: 2-element Array{Number,1}
+    y: 3-element Array{Number,1}
 Attributes  : Dict{Any,Any}()
 ```
-This returns a subset where the dimension `y` ranges from 4:8.
+This returns a subset where the dimension `y` ranges from 4:2:8.
 
 ```julia-repl
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
@@ -77,16 +77,16 @@ Coordinates :
     y: 2-element Array{Number,1}
 Attributes  : Dict{Any,Any}()
 ```
-This returns a subset where the dimension `y` ranges from 2:4.
+This returns a subset where the dimension `y` ranges from 2:2:4.
 
 ```julia-repl
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> juxta.sel!(ja, "nearest", y=3.7)
 Dimensions  : ["x", "y"]
-Array       : 5×2 Array{Float64,2}
+Array       : 5×1 Array{Float64,2}
 Coordinates :
     x: 5-element Array{Number,1}
-    y: 2-element Array{Number,1}
+    y: 1-element Array{Number,1}
 Attributes  : Dict{Any,Any}()
 ```
 This returns a subset where the dimension `y` ranges from 4:4.
@@ -105,7 +105,7 @@ Coordinates :
 Attributes  : Dict{Any,Any}()
 ```
 
-All of the above operations can be combined using Julia's piping functionality.
+All of the above operations can be combined using Julia's piping functionality:
 ```julia-repl
 julia> ja = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
@@ -115,18 +115,27 @@ julia> ja = (ja
                |> j->size(j))
 (10,)
 ```
-or by using Pipe.jl.
+or by using Pipe.jl:
 ```julia-repl
+julia> using Pipe
 julia> ja = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
-julia> ja = (ja
-               |> juxta.isel!(_,x=2)
-               |> dropdims(_,["x","za"])
-               |> size(_))
+julia> ja = @pipe (ja
+                     |> juxta.isel!(_,x=2)
+                     |> dropdims(_,["x","za"])
+                     |> size(_))
+(10,)
+```
+or by using Lazy.jl:
+```julia-repl
+julia> using Lazy
+julia> ja = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
+julia> ja = @> ja juxta.isel!(x=2) dropdims(["x","za"]) size()
 (10,)
 ```
 
-# TODO
+## TODO
 
 - Test with datetime dimensions
 - Implement plotting
