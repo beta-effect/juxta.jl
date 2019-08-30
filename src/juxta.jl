@@ -76,7 +76,8 @@ function isel!(ja::JuxtArray; kwargs...)
         end
     end
     inds = Vector{AbstractRange}()
-    for (dim, range) in ja.indices
+    for dim in ja.dims
+        range = ja.indices[dim]
         ja.coords[dim] = ja.coords[dim][range]
         push!(inds, range)
         push!(ja.indices, dim=>1:length(ja.coords[dim]))

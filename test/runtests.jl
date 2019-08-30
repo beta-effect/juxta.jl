@@ -9,8 +9,8 @@ ja2 = juxta.JuxtArray(randn(5,10), ["x","y"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 ja3 = juxta.JuxtArray(randn(5,10), ["x","y"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
-ja4 = juxta.JuxtArray(randn(5,10), ["x","y"],
-                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
+ja4 = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
+                     Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
 @testset "juxta.jl" begin
     @test typeof(ja) == juxta.JuxtArray
     @test ja.indices["x"] == 1:5
@@ -40,7 +40,7 @@ ja4 = juxta.JuxtArray(randn(5,10), ["x","y"],
     @test ja3.dims == ["y"]
     @test (ja4
            |> j->juxta.isel!(j,x=2)
-           |> j->dropdims(j,["x"])
+           |> j->dropdims(j,["x","za"])
            |> j->size(j)) == (10,)
     @test ja4.dims == ["y"]
     @test typeof(show(ja4)) == Nothing
