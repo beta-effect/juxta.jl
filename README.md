@@ -11,7 +11,7 @@ A container, `JuxtArray`, is provided. Only slicing is currently implemented.
 
 Creation:
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10)))
 Dimensions  : ["x", "y"]
 Array       : 5×10 Array{Float64,2}
@@ -23,7 +23,7 @@ Attributes  : Dict{Any,Any}()
 
 Index-based slicing:
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10)))
 Dimensions  : ["x", "y"]
 Array       : 5×10 Array{Float64,2}
@@ -43,7 +43,7 @@ Attributes  : Dict{Any,Any}()
 Indexing based on physical values of dimensions:
 
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> juxta.sel!(ja, y=3.7:7.9)
 Dimensions  : ["x", "y"]
@@ -55,7 +55,7 @@ Attributes  : Dict{Any,Any}()
 ```
 This returns a subset where the dimension `y` ranges from 4:2:6.
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> juxta.sel!(ja, "nearest", y=3.7:7.9)
 Dimensions  : ["x", "y"]
@@ -67,7 +67,7 @@ Attributes  : Dict{Any,Any}()
 ```
 This returns a subset where the dimension `y` ranges from 4:2:8.
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> juxta.sel!(ja, y=3.7)
 Dimensions  : ["x", "y"]
@@ -79,7 +79,7 @@ Attributes  : Dict{Any,Any}()
 ```
 This returns a subset where the dimension `y` ranges from 2:2:4.
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> juxta.sel!(ja, "nearest", y=3.7)
 Dimensions  : ["x", "y"]
@@ -93,7 +93,7 @@ This returns a subset where the dimension `y` ranges from 4:4.
 
 Dropping singleton dimensions:
 
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10), ["x","y"], Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2))
 julia> ja = juxta.sel!(ja, "nearest", x=0.8)
 julia> ja = dropdims(ja, ["x"])
@@ -106,7 +106,7 @@ Attributes  : Dict{Any,Any}()
 ```
 
 All of the above operations can be combined using Julia's piping functionality:
-```julia-repl
+```julia
 julia> ja = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
 julia> ja = (ja
@@ -116,7 +116,7 @@ julia> ja = (ja
 (10,)
 ```
 or by using Pipe.jl:
-```julia-repl
+```julia
 julia> using Pipe
 julia> ja = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
@@ -127,7 +127,7 @@ julia> ja = @pipe (ja
 (10,)
 ```
 or by using Lazy.jl:
-```julia-repl
+```julia
 julia> using Lazy
 julia> ja = juxta.JuxtArray(randn(5,10,1), ["x","y","za"],
                      Dict("x"=>collect(1:5),"y"=>collect(1:10) .* 2,"za"=>[2]))
