@@ -35,7 +35,9 @@ function Base.show(io::IO, ja::JuxtArray)
     for (k,v) in ja.coords
         println("    $k: $(summary(v))")
     end
-    println("Attributes  : $(ja.attribs)")
+    if !(isempty(ja.attribs))
+        println("Attributes  : $(ja.attribs)")
+    end
 end
 
 # function Base.setproperty!(ja::JuxtArray, ::Field{:coords}, d::Dict{String, Vector{Number}})
